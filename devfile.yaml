@@ -14,6 +14,10 @@ projects:
     git:
       remotes:
         origin: 'https://github.com/marcoklaassen/devspaces-contract-demo-customer-api'
+  - name: devspaces
+    git:
+      remotes:
+        origin: 'https://github.com/marcoklaassen/devspaces-contract-demo-devspaces'
 components:
   - name: tools
     container:
@@ -43,26 +47,26 @@ components:
     volume:
       size: 1G
 commands:
-  - id: 0-install-dependencies
+  - id: 0-install-infrastructure
     exec:
-      label: "0. Install Dependencies Helm Chart"
+      label: "0. [Infrastructure] Install Infrastructure Helm Chart"
       component: tools
-      workingDir: ${PROJECTS_ROOT}/devspaces-contract-demo
-      commandLine: "helm upgrade dependencies dependencies --install"
-  - id: 1-package
+      workingDir: ${PROJECTS_ROOT}/infrastructure
+      commandLine: "helm upgrade infrastructure . --install"
+  - id: 1-package-backend
     exec:
-      label: "1. Package the application"
+      label: "1. [contract-backend] Package"
       component: tools
-      workingDir: ${PROJECTS_ROOT}/devspaces-contract-demo
+      workingDir: ${PROJECTS_ROOT}/contract-backend
       commandLine: "mvn package"
       group:
         kind: build
         isDefault: true
-  - id: 2-startdev
+  - id: 2-dev-backend
     exec:
-      label: "2. Start Development mode (Hot reload + debug)"
+      label: "2. [contract-backend] Start Development mode (quarkus-dev)"
       component: tools
-      workingDir: ${PROJECTS_ROOT}/devspaces-contract-demo
+      workingDir: ${PROJECTS_ROOT}/contract-backend
       commandLine: "quarkus dev"
       group:
         kind: run
