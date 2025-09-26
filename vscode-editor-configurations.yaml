@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vscode-editor-configurations
+  labels:
+     app.kubernetes.io/part-of: che.eclipse.org
+data:
+  extensions.json: |
+    {
+      "recommendations": [
+          "dbaeumer.vscode-eslint",
+          "github.vscode-pull-request-github",
+          "mtxr.sqltools",
+          "mtxr.sqltools-driver-pg"
+      ]
+    }
+  settings.json: |
+    {
+      "window.header": "Klaassen.Click DevSpaces Demo",
+      "window.commandCenter": false,
+      "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#DC143C",
+        "titleBar.activeForeground": "#ffffff"
+      },
+      "sqltools.connections": [
+        {
+        "ssh": "Disabled",
+        "previewLimit": 50,
+        "server": "postgresql-service",
+        "port": 5432,
+        "driver": "PostgreSQL",
+        "name": " postgresql-service",
+        "database": "contracts",
+        "username": "developer",
+        "password": "developer"
+        }
+      ]
+    }
+  product.json: |
+    {
+      "extensionEnabledApiProposals": {
+        
+      },
+      "trustedExtensionAuthAccess": [
+        
+      ]
+    }
+  configurations.json: |
+    {
+      "extensions.install-from-vsix-enabled": false
+    }

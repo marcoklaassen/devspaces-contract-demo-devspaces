@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:  
+  name: custom-udi-pipeline
+spec:
+  tasks:
+  
+    - name: git-clone
+      params:
+        - name: URL
+          value: 'https://github.com/marcoklaassen/devspaces-contract-demo'
+        - name: REVISION
+          value: main
+      taskRef:
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
+        resolver: cluster
+      workspaces:
+        - name: output
+          workspace: source
+          
+    - name: buildah
+      params:
+        - name: IMAGE
+          value: 'quay.io/mklaasse/udi-rhel9:jdk21'
+        - name: DOCKERFILE
+          value: ./devspaces-customization/universal-developer-image/Dockerfile.custom-udi
+        - name: CONTEXT
+          value: .
+      runAfter:
+        - git-clone
+      taskRef:
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+        resolver: cluster
+      workspaces:
+        - name: source
+          workspace: source
+    
+  workspaces:
+    - name: source

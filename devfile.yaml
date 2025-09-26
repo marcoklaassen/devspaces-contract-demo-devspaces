@@ -1,0 +1,56 @@
+schemaVersion: 2.2.2
+metadata:
+  name: quarkus-app
+components:
+  - name: tools
+    container:
+      image: quay.io/mklaasse/udi-rhel9:jdk21
+      env:
+        - name: QUARKUS_HTTP_HOST
+          value: 0.0.0.0
+      endpoints:
+        - exposure: none
+          name: debug
+          protocol: tcp
+          targetPort: 5005
+        - exposure: public
+          name: hello-greeting
+          protocol: https
+          targetPort: 8080
+          path: /contract
+      volumeMounts:
+        - name: m2
+          path: /home/user/.m2
+      cpuLimit: '4'
+      cpuRequest: '1'
+      memoryLimit: '8G'
+      memoryRequest: '4G'
+      mountSources: true
+  - name: m2
+    volume:
+      size: 1G
+commands:
+  - id: 0-install-dependencies
+    exec:
+      label: "0. Install Dependencies Helm Chart"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/devspaces-contract-demo
+      commandLine: "helm upgrade dependencies dependencies --install"
+  - id: 1-package
+    exec:
+      label: "1. Package the application"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/devspaces-contract-demo
+      commandLine: "mvn package"
+      group:
+        kind: build
+        isDefault: true
+  - id: 2-startdev
+    exec:
+      label: "2. Start Development mode (Hot reload + debug)"
+      component: tools
+      workingDir: ${PROJECTS_ROOT}/devspaces-contract-demo
+      commandLine: "quarkus dev"
+      group:
+        kind: run
+        isDefault: true

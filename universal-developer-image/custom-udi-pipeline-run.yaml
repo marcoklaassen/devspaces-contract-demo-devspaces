@@ -1,0 +1,30 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: custom-udi-pipeline-
+  finalizers:
+    - results.tekton.dev/pipelinerun
+    - chains.tekton.dev/pipelinerun
+  labels:
+    tekton.dev/pipeline: custom-udi-pipeline
+spec:
+  pipelineRef:
+    name: custom-udi-pipeline
+  taskRunTemplate:
+    serviceAccountName: pipeline
+  timeouts:
+    pipeline: 1h0m0s
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        metadata:
+          creationTimestamp: null
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+          storageClassName: managed-nfs-storage
+          volumeMode: Filesystem
+        status: {}
