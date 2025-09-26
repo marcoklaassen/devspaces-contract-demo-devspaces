@@ -1,6 +1,19 @@
 schemaVersion: 2.2.2
 metadata:
-  name: quarkus-app
+  name: contract-demo
+projects:
+  - name: contract-backend
+    git:
+      remotes:
+        origin: 'https://github.com/marcoklaassen/devspaces-contract-demo-backend'
+  - name: infrastructure
+    git:
+      remotes:
+        origin: 'https://github.com/marcoklaassen/devspaces-contract-demo-infrastructure'
+  - name: customer-api
+    git:
+      remotes:
+        origin: 'https://github.com/marcoklaassen/devspaces-contract-demo-customer-api'
 components:
   - name: tools
     container:
@@ -14,7 +27,7 @@ components:
           protocol: tcp
           targetPort: 5005
         - exposure: public
-          name: hello-greeting
+          name: contract
           protocol: https
           targetPort: 8080
           path: /contract
