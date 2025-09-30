@@ -11,7 +11,8 @@ data:
           "dbaeumer.vscode-eslint",
           "github.vscode-pull-request-github",
           "mtxr.sqltools",
-          "mtxr.sqltools-driver-pg"
+          "mtxr.sqltools-driver-pg",
+          "redhat.java"
       ]
     }
   settings.json: |
