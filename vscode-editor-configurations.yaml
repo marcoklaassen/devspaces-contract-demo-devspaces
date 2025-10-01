@@ -13,7 +13,7 @@ data:
           "mtxr.sqltools",
           "mtxr.sqltools-driver-pg",
           "redhat.java",
-          "vscjava.vscode-maven",
+          "vscjava.vscode-maven"
       ]
     }
   settings.json: |
@@ -36,14 +36,7 @@ data:
         "username": "developer",
         "password": "developer"
         }
-      ],
-      "java.configuration.runtimes": [    
-        {
-            "name": "JavaSE-21",
-            "path": "/home/user/.java/current",
-            "default": true,
-        },
-      ],
+      ]
     }
   product.json: |
     {

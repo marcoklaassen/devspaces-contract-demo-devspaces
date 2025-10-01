@@ -69,10 +69,9 @@ commands:
       component: tools
       workingDir: ${PROJECTS_ROOT}/contract-backend
       commandLine: | 
-        # Workaround: not able to inject Secrets managed by Strimzi operator in DevSpaces, yet
-        KAFKA_USERNAME=kafka-developer
-        KAFKA_PASSWORD=$(oc get secret kafka-developer -o json | jq -r '.data.password' | base64 --decode)
-        BOOTSTRAP_SERVERS=$(oc get svc kafka-kafka-bootstrap -o json | jq -r '.metadata.name + ":" + (.spec.ports[] | select(.name == "tcp-clients").port | tostring)')
+        # Workaround: not able to inject Secrets managed by Strimzi operator in DevSpaces, yet \
+        KAFKA_SASL_JAAS_CONFIG=$(oc get secret kafka-developer -o json | jq -r '.data."sasl.jaas.config"' | base64 --decode) \
+        BOOTSTRAP_SERVERS=$(oc get svc kafka-kafka-bootstrap -o json | jq -r '.metadata.name + ":" + (.spec.ports[] | select(.name == "tcp-clients").port | tostring)') \
         quarkus dev
       group:
         kind: run
