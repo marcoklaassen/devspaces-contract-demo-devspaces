@@ -18,6 +18,7 @@ projects:
     git:
       remotes:
         origin: 'https://github.com/marcoklaassen/devspaces-contract-demo-devspaces'
+          
 components:
   - name: tools
     container:
@@ -67,7 +68,12 @@ commands:
       label: "2. [contract-backend] Start Development mode (quarkus-dev)"
       component: tools
       workingDir: ${PROJECTS_ROOT}/contract-backend
-      commandLine: "quarkus dev"
+      commandLine: | 
+        # Workaround: not able to inject Secrets managed by Strimzi operator in DevSpaces, yet
+        KAFKA_USERNAME=kafka-developer
+        KAFKA_PASSWORD=$(oc get secret kafka-developer -o json | jq -r '.data.password' | base64 --decode)
+        BOOTSTRAP_SERVERS=$(oc get svc kafka-kafka-bootstrap -o json | jq -r '.metadata.name + ":" + (.spec.ports[] | select(.name == "tcp-clients").port | tostring)')
+        quarkus dev
       group:
         kind: run
         isDefault: true

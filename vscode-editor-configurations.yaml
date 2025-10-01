@@ -12,7 +12,8 @@ data:
           "github.vscode-pull-request-github",
           "mtxr.sqltools",
           "mtxr.sqltools-driver-pg",
-          "redhat.java"
+          "redhat.java",
+          "vscjava.vscode-maven",
       ]
     }
   settings.json: |
@@ -35,7 +36,14 @@ data:
         "username": "developer",
         "password": "developer"
         }
-      ]
+      ],
+      "java.configuration.runtimes": [    
+        {
+            "name": "JavaSE-21",
+            "path": "/home/user/.java/current",
+            "default": true,
+        },
+      ],
     }
   product.json: |
     {
