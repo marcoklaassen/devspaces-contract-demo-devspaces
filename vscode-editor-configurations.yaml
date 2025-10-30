@@ -37,7 +37,8 @@ data:
         "password": "developer"
         }
       ],
-      "java.configuration.updateBuildConfiguration": "automatic"
+      "java.configuration.updateBuildConfiguration": "automatic",
+      "java.server.launchMode": "Standard"
     }
   product.json: |
     {
