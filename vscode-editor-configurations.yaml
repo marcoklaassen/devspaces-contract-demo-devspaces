@@ -36,7 +36,8 @@ data:
         "username": "developer",
         "password": "developer"
         }
-      ]
+      ],
+      "java.configuration.updateBuildConfiguration": "automatic"
     }
   product.json: |
     {
