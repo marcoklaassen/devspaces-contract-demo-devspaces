@@ -26,6 +26,8 @@ components:
       env:
         - name: QUARKUS_HTTP_HOST
           value: 0.0.0.0
+        - name: QUARKUS_CUSTOMER_API_URL
+          value: 'https://customer-api-customer-api.apps.ocp4.klaassen.click'
       endpoints:
         - exposure: none
           name: debug
