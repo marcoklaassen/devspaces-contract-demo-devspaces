@@ -174,3 +174,52 @@ contract-backend (main) $ oc get kafkausers.kafka.strimzi.io
 NAME              CLUSTER   AUTHENTICATION   AUTHORIZATION   READY
 kafka-developer   kafka     scram-sha-512    simple          True
 ```
+
+### Run our backend
+
+No we want to implement new features to our contract backend.
+We have to make sure that we can run and test our backend in our IDE first. Execute the devfile command like you did to install the infrastructure components - but this time use the command: `2. [contract-backend] Start Development mode (quarkus-dev)`
+
+This command will set the environment variables you need to access the infrastructure and start the the quarkus backend with `quarkus dev`.
+
+In the logs you can see that the database was initialized: 
+
+```
+[Hibernate] 
+    set client_min_messages = WARNING
+[Hibernate] 
+    drop table if exists Contract cascade
+[Hibernate] 
+    drop sequence if exists Contract_SEQ
+[Hibernate] 
+    create sequence Contract_SEQ start with 1 increment by 50
+[Hibernate] 
+    create table Contract (
+        firstContractOfCustomer boolean,
+        id bigint not null,
+        customer varchar(40),
+        type varchar(40),
+        primary key (id)
+    )
+
+[Hibernate] INSERT INTO "contract"(id, "type", customer, firstContractOfCustomer) VALUES (1, 'health', 'Marco', true)
+[Hibernate] INSERT INTO "contract"(id, "type", customer, firstContractOfCustomer) VALUES (2, 'car', 'John', true)
+[Hibernate] ALTER SEQUENCE contract_seq RESTART WITH 3
+```
+
+And you can also check if the connection to the kafka topic was sucessfull: 
+
+```
+INFO  [io.sma.rea.mes.kafka] (Quarkus Main Thread) SRMSG18229: Configured topics for channel 'contract': [contract]
+
+INFO  [org.apa.kaf.com.sec.aut.AbstractLogin] (smallrye-kafka-consumer-thread-0) Successfully logged in.
+```
+
+By executing `curl localhost:8080/contract` you can also confirm that the API works as expected and the database connection is ready:
+
+```
+[{"id":2,"type":"car","customer":"John","firstContractOfCustomer":true},{"id":1,"type":"health","customer":"Marco","firstContractOfCustomer":true}]`
+```
+
+Now you can start extending new features to or fixing bugs in your contract backend and test them *locally* (in your hosted IDE). Get get here you didn't have to configure an IDE or your local machine. Everything was done for you by the combination of DevSpaces default configuration and Devfile *magic*. 
+
