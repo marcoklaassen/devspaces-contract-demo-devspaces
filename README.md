@@ -11,6 +11,13 @@ And this is a very good first step to modernize the application and decouple com
 
 ## Demo Application's Architecture
 
+This is the entry point for a demo with several repositories involved: 
+* [Root Repo / This Repo](https://github.com/marcoklaassen/devspaces-contract-demo-devspaces)
+ * [Infrastructure (Database, Kafka)](https://github.com/marcoklaassen/devspaces-contract-demo-infrastructure)
+ * [Backend Application (Contract Backend)](https://github.com/marcoklaassen/devspaces-contract-demo-backend)
+ * [External API (Customer Backend)](https://github.com/marcoklaassen/devspaces-contract-demo-customer-api)
+
+
 ```
  external component outside        │     The component              │       Components I want  
  my devspaces namespace                I want to work on                    to start during    
