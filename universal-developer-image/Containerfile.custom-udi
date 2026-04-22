@@ -30,5 +30,5 @@ RUN curl -LsO https://github.com/quarkusio/quarkus/releases/download/${QUARKUS_V
 
 USER 1001
 
-# Verify both tools are available
-RUN quarkus --version && kcat -V
+# Verify tools are available
+RUN quarkus --version
