@@ -223,3 +223,39 @@ By executing `curl localhost:8080/contract` you can also confirm that the API wo
 
 Now you can start extending new features to or fixing bugs in your contract backend and test them *locally* (in your hosted IDE). Get get here you didn't have to configure an IDE or your local machine. Everything was done for you by the combination of DevSpaces default configuration and Devfile *magic*. 
 
+### Deploy customer api
+
+For this demo we decided to look at the *customer api* as an external service which is deployed somewhere else - not in our namespace, maybe outside of our OpenShift environment. 
+We should look at this service as something we don't have under control. 
+
+But to prepare the demo you have to make sure that this application is living somewhere. For that reason the following lines will tell you how to deploy the *customer api*. 
+
+```
+oc new-project customer-api
+oc project customer-api 
+cd ../customer-api/helm/customer-api/
+helm install customer-api .
+```
+
+By creating a new contract in our *contract backend* we ask the *customer api* if the customer already exists
+
+```
+curl -X POST http://localhost:8080/contract -H "Content-Type: application/json" -d '{"type": "car", "customer": "Hawkeye"}'
+```
+
+So we'll know if the API is up and running. Alternatively we can also check this with 
+
+```
+curl https://customer-api-customer-api.apps.ocp4.klaassen.click/customer
+```
+
+which should return something like: 
+
+```
+[{"id":1,"name":"Marco"},{"id":2,"name":"John"}]
+```
+
+How does our *contract backend* know about the *customer api*? In `devfile.yaml` we defined an environment variable `QUARKUS_CUSTOMER_API_URL`. This environment variable is used in the `properties.yaml` of our *contract backend* to configure the API client. 
+
+
+
