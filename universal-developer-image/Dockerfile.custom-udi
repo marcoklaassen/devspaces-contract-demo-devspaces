@@ -2,6 +2,11 @@ FROM registry.redhat.io/devspaces/udi-rhel9
 
 USER root
 
+# Install kcat and clean up cache to keep the image slim
+RUN dnf install -y kcat && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
+
 RUN rm -rf ~/.java/current/ \
     && mkdir -p ~/.java/current/ \
     && ln -s /usr/lib/jvm/java-21-openjdk/* ~/.java/current
@@ -18,4 +23,5 @@ RUN curl -LsO https://github.com/quarkusio/quarkus/releases/download/${QUARKUS_V
 
 USER 1001
 
-RUN quarkus --version
+# Verify both tools are available
+RUN quarkus --version && kcat -V
