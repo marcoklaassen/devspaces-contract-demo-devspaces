@@ -280,11 +280,12 @@ no changes added to commit (use "git add" and/or "git commit -a")
 Now create the pipeline and a pipeline-run in OpenShift:
 
 ```
-devspaces (main) $ oc apply -f universal-developer-image/custom-udi-pipeline.yaml 
+oc project marcoklaassen-devspaces 
+oc apply -f universal-developer-image/custom-udi-pipeline.yaml 
 # pipeline.tekton.dev/custom-udi-pipeline created
 
 oc create -f universal-developer-image/custom-udi-pipeline-run.yaml 
-# pipelinerun.tekton.dev/custom-udi-pipeline-7lbkj created
+# pipelinerun.tekton.dev/custom-udi-pipeline-<id> created
 ```
 
 After pipeline finished the new version of the UDI is available in your container image repository. 
