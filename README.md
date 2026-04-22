@@ -257,5 +257,36 @@ which should return something like:
 
 How does our *contract backend* know about the *customer api*? In `devfile.yaml` we defined an environment variable `QUARKUS_CUSTOMER_API_URL`. This environment variable is used in the `properties.yaml` of our *contract backend* to configure the API client. 
 
+## Universal Developer Image
+
+This section describes how to customize and build the universal developer image. 
+
+First you have to change / customize your `Containerfile.custom-udi`. 
+After you added new features / tools (like adding cli tools, installing new frameworks, upgrading quarkus, ...) commit and push these changes. 
+
+```
+devspaces (main) $ git status
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   universal-developer-image/Containerfile.custom-udi
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+
+Now create the pipeline and a pipeline-run in OpenShift:
+
+```
+devspaces (main) $ oc apply -f universal-developer-image/custom-udi-pipeline.yaml 
+# pipeline.tekton.dev/custom-udi-pipeline created
+
+oc create -f universal-developer-image/custom-udi-pipeline-run.yaml 
+# pipelinerun.tekton.dev/custom-udi-pipeline-7lbkj created
+```
+
+After pipeline finished the new version of the UDI is available in your container image repository. 
 
 

@@ -8,7 +8,7 @@ spec:
     - name: git-clone
       params:
         - name: URL
-          value: 'https://github.com/marcoklaassen/devspaces-contract-demo'
+          value: 'https://github.com/marcoklaassen/devspaces-contract-demo-devspaces'
         - name: REVISION
           value: main
       taskRef:
@@ -29,7 +29,7 @@ spec:
         - name: IMAGE
           value: 'quay.io/mklaasse/udi-rhel9:jdk21'
         - name: DOCKERFILE
-          value: ./devspaces-customization/universal-developer-image/Dockerfile.custom-udi
+          value: ./universal-developer-image/Containerfile.custom-udi
         - name: CONTEXT
           value: .
       runAfter:
