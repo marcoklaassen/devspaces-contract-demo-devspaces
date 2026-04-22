@@ -2,10 +2,7 @@ FROM registry.redhat.io/devspaces/udi-rhel9
 
 USER root
 
-# Install kcat and clean up cache to keep the image slim
-RUN dnf install -y kcat && \
-    dnf clean all && \
-    rm -rf /var/cache/dnf
+RUN dnf copr enable bvn13/kcat -y && dnf update -y && dnf install kcat -y
 
 RUN rm -rf ~/.java/current/ \
     && mkdir -p ~/.java/current/ \
