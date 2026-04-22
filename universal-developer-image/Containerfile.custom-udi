@@ -2,17 +2,25 @@ FROM registry.redhat.io/devspaces/udi-rhel9
 
 USER root
 
-RUN dnf copr enable bvn13/kcat -y \
-    && dnf update -y \
-    && dnf install kcat cyrus-sasl-gssapi cyrus-sasl-devel -y
+# Define versions
+ARG QUARKUS_VERSION=3.28.1
+ARG KAFKA_VERSION=3.7.0
+ARG SCALA_VERSION=2.13
+
+ENV QUARKUS_HOME="/usr/local/quarkus"
+ENV KAFKA_HOME="/usr/local/kafka"
+
+# Install and download Kafka binaries
+RUN curl -LsO https://archive.apache.org/dist/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz && \
+    tar -xzf kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz -C /usr/local && \
+    mv /usr/local/kafka_${SCALA_VERSION}-${KAFKA_VERSION} /usr/local/kafka && \
+    rm kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz
 
 RUN rm -rf ~/.java/current/ \
     && mkdir -p ~/.java/current/ \
     && ln -s /usr/lib/jvm/java-21-openjdk/* ~/.java/current
 
-ARG QUARKUS_VERSION=3.28.1
-
-ENV QUARKUS_HOME="/usr/local/quarkus"
+ENV PATH="${KAFKA_HOME}/bin:${PATH}"
 ENV PATH="${QUARKUS_HOME}/bin:${PATH}"
 
 RUN curl -LsO https://github.com/quarkusio/quarkus/releases/download/${QUARKUS_VERSION}/quarkus-cli-${QUARKUS_VERSION}.zip && \
