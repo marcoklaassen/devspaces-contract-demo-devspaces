@@ -2,7 +2,9 @@ FROM registry.redhat.io/devspaces/udi-rhel9
 
 USER root
 
-RUN dnf copr enable bvn13/kcat -y && dnf update -y && dnf install kcat -y
+RUN dnf copr enable bvn13/kcat -y \
+    && dnf update -y \
+    && dnf install kcat cyrus-sasl-gssapi cyrus-sasl-devel -y
 
 RUN rm -rf ~/.java/current/ \
     && mkdir -p ~/.java/current/ \
