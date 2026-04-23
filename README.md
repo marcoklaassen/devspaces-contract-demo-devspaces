@@ -257,6 +257,22 @@ which should return something like:
 
 How does our *contract backend* know about the *customer api*? In `devfile.yaml` we defined an environment variable `QUARKUS_CUSTOMER_API_URL`. This environment variable is used in the `properties.yaml` of our *contract backend* to configure the API client. 
 
+### Test application with Kafka Message
+
+The *contract backend* is designed to receive a new contract through a Kafka topic. After receiving the new contract it asks *customer api* if customer already exists and sets contract's field if it's a new customer or an existing one. To test this end-to-end process there is a `trigger-kafka-producer.sh` script. 
+
+You can run the script like 
+
+```
+./trigger-kafka-producer.sh '{"type":"car","customer":"felix"}'
+```
+
+to produce a new contract. Logs should look like this: 
+
+```
+INFO  [org.acm.ContractResource] (vert.x-worker-thread-1) Customer felix already exists. Setting firstContractOfCustomer to false.
+```
+
 ## Universal Developer Image
 
 This section describes how to customize and build the universal developer image. 
