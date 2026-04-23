@@ -306,6 +306,8 @@ After pipeline finished the new version of the UDI is available in your containe
 
 ## The secure way to run nested containers in OpenShift Dev Spaces
 
+### Sunshine test
+
 [Enable container run capabilities](https://docs.redhat.com/en/documentation/red_hat_openshift_dev_spaces/3.27/html/administration_guide/assembly_configuring-workspaces-globally_administration_guide#proc_enabling-container-run-capabilities_administration_guide) 
 
 ```bash
@@ -342,6 +344,32 @@ contract-backend (main) $ podman unshare cat /proc/self/uid_map
 * The Rest: Any other user inside Podman (UID 1 through 64535) is mapped to UIDs starting at 1001 and up in your DevSpaces pod.
 * The process is actually restricted. 
 * If that sleep process tried to reach out and touch a file on your DevSpaces disk owned by "real" root, the Linux kernel would look at the map, see that the process is actually just 1000, and say "Access Denied."
+
+### The "Host ID" Proof
+
+First get the node name and the container id: 
+
+```bash
+oc get pod workspace5bfb7f36a8884a17-dbf47d658-plsfl -o jsonpath='{.spec.nodeName}{"\n"}{.status.containerStatuses[1].containerID}{"\n"}'
+  master-0
+  cri-o://8fbbf203617b1b707e38d8101e367627cebb014c31482e94aba518a373f1c744
+```
+
+```bash
+oc debug node/master-0
+
+chroot /host
+
+# Search for the sleep process and display the User ID (UID) and Command
+ps -eo uid,user,comm | grep sleep
+  174130152 1741301+ sleep # 174130152 is a random, unprivileged ID with no permissions on the host
+
+ps -u 174130152 -o pid,comm | grep sleep | awk '{print $1}' | xargs -I {} cat /proc/{}/cgroup
+  0::/kubepods.slice/kubepods-burstable.slice/kubepods-burstable-pod6519f931_68b6_4927_87cc_fd5428549e92.slice/crio-8fbbf203617b1b707e38d8101e367627cebb014c31482e94aba518a373f1c744.scope
+# proove that this process with this userid is running our Dev Spaces Container
+```
+
+### The Cross-Check
 
 As soon as we revert the change 
 ```bash
