@@ -342,3 +342,31 @@ contract-backend (main) $ podman unshare cat /proc/self/uid_map
 * The Rest: Any other user inside Podman (UID 1 through 64535) is mapped to UIDs starting at 1001 and up in your DevSpaces pod.
 * The process is actually restricted. 
 * If that sleep process tried to reach out and touch a file on your DevSpaces disk owned by "real" root, the Linux kernel would look at the map, see that the process is actually just 1000, and say "Access Denied."
+
+As soon as we revert the change 
+```bash
+oc patch checluster/devspaces -n openshift-devspaces \
+  --type='merge' -p \
+  '{"spec":{"devEnvironments":{"disableContainerRunCapabilities":true}}}'
+```
+
+our nested container approach would look like this (it'll fail):
+
+```bash
+# user ID is now 1000780000. This is a standard, restricted OpenShift UID
+contract-backend (main) $ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+[...]
+user:x:1000780000:0::/home/user:/bin/bash
+
+contract-backend (main) $ podman run -d --name security-test alpine sleep 9999
+Resolved "alpine" as an alias (/etc/containers/registries.conf.d/000-shortnames.conf)
+Trying to pull docker.io/library/alpine:latest...
+Getting image source signatures
+Copying blob 6a0ac1617861 done   | 
+Copying config 3cb067eab6 done   | 
+Writing manifest to image destination
+Error: pasta failed with exit code 1:
+Failed to open() /dev/net/tun: No such file or directory
+Failed to set up tap device in namespace
+```
