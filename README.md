@@ -76,7 +76,7 @@ This is the entry point for a demo with several repositories involved:
 
 Update the openVSXURL: Locate the spec.components.pluginRegistry section and set the openVSXURL field to the public registry URL.
 
-```
+```bash
 spec:
   components:
     pluginRegistry:
@@ -87,7 +87,7 @@ spec:
 
 ### Configure Git & VSCode Editor
 
-```
+```bash
 oc apply -f gitconfig-configmap.yaml
 oc apply -f vscode-editor-configurations.yaml 
 
@@ -95,7 +95,7 @@ oc apply -f vscode-editor-configurations.yaml
 
 ### Configure Github Oauth
 
-```
+```bash
 # https://docs.redhat.com/en/documentation/red_hat_openshift_dev_spaces/3.27/html/administration_guide/assembly_configuring-oauth-for-git-providers_administration_guide#proc_setting-up-the-github-oauth-app_administration_guide
 oc apply -f github-secret.yaml -n openshift-operators
 ```
@@ -105,7 +105,7 @@ oc apply -f github-secret.yaml -n openshift-operators
 To access the UDI base image the pipeline service account must have access to registry.redhat.io. 
 And to push the image to the quay.io repository the service account must also have access to the repository. 
 
-```
+```bash
 # usually done in the <username>-devspaces namespace
 oc create secret generic container-registry-credentials --from-file=.dockerconfigjson=<path-to-your-dockerconfig.json> --type=kubernetes.io/dockerconfigjson
 oc secret link pipeline container-registry-credentials                                                   
@@ -139,7 +139,7 @@ You can also check if the database (which is provisioned by the infrastructure h
 The second check you should to is about the kafka infrastructure. Open a new terminal in your IDE and check the deployment: 
 
 Containers are running ☑️
-```
+```bash
 contract-backend (main) $ oc get pods
 NAME                                         READY   STATUS    RESTARTS   AGE
 kafka-broker-0                               1/1     Running   0          5m9s
@@ -154,14 +154,14 @@ workspace1ea012ac59bf4f86-79dd7c5485-725vv   2/2     Running   0          17m
 ```
 
 Kafka Cluster ready ☑️
-```
+```bash
 contract-backend (main) $ oc get kafka
 NAME    READY   METADATA STATE   WARNINGS
 kafka   True    KRaft            
 ```
 
 Kafka Topic ready ☑️
-```
+```bash
 contract-backend (main) $ oc get kafkatopics.kafka.strimzi.io 
 NAME       CLUSTER   PARTITIONS   REPLICATION FACTOR   READY
 contract   kafka     1            1                    True
@@ -169,7 +169,7 @@ contract   kafka     1            1                    True
 
 
 Kafka User ready ☑️
-```
+```bash
 contract-backend (main) $ oc get kafkausers.kafka.strimzi.io 
 NAME              CLUSTER   AUTHENTICATION   AUTHORIZATION   READY
 kafka-developer   kafka     scram-sha-512    simple          True
@@ -184,7 +184,7 @@ This command will set the environment variables you need to access the infrastru
 
 In the logs you can see that the database was initialized: 
 
-```
+```bash
 [Hibernate] 
     set client_min_messages = WARNING
 [Hibernate] 
@@ -209,7 +209,7 @@ In the logs you can see that the database was initialized:
 
 And you can also check if the connection to the kafka topic was sucessfull: 
 
-```
+```bash
 INFO  [io.sma.rea.mes.kafka] (Quarkus Main Thread) SRMSG18229: Configured topics for channel 'contract': [contract]
 
 INFO  [org.apa.kaf.com.sec.aut.AbstractLogin] (smallrye-kafka-consumer-thread-0) Successfully logged in.
@@ -217,7 +217,7 @@ INFO  [org.apa.kaf.com.sec.aut.AbstractLogin] (smallrye-kafka-consumer-thread-0)
 
 By executing `curl localhost:8080/contract` you can also confirm that the API works as expected and the database connection is ready:
 
-```
+```bash
 [{"id":2,"type":"car","customer":"John","firstContractOfCustomer":true},{"id":1,"type":"health","customer":"Marco","firstContractOfCustomer":true}]`
 ```
 
@@ -230,7 +230,7 @@ We should look at this service as something we don't have under control.
 
 But to prepare the demo you have to make sure that this application is living somewhere. For that reason the following lines will tell you how to deploy the *customer api*. 
 
-```
+```bash
 oc new-project customer-api
 oc project customer-api 
 cd ../customer-api/helm/customer-api/
@@ -239,19 +239,19 @@ helm install customer-api .
 
 By creating a new contract in our *contract backend* we ask the *customer api* if the customer already exists
 
-```
+```bash
 curl -X POST http://localhost:8080/contract -H "Content-Type: application/json" -d '{"type": "car", "customer": "Hawkeye"}'
 ```
 
 So we'll know if the API is up and running. Alternatively we can also check this with 
 
-```
+```bash
 curl https://customer-api-customer-api.apps.ocp4.klaassen.click/customer
 ```
 
 which should return something like: 
 
-```
+```bash
 [{"id":1,"name":"Marco"},{"id":2,"name":"John"}]
 ```
 
@@ -263,13 +263,13 @@ The *contract backend* is designed to receive a new contract through a Kafka top
 
 You can run the script like 
 
-```
+```bash
 ./trigger-kafka-producer.sh '{"type":"car","customer":"felix"}'
 ```
 
 to produce a new contract. Logs should look like this: 
 
-```
+```bash
 INFO  [org.acm.ContractResource] (vert.x-worker-thread-1) Customer felix already exists. Setting firstContractOfCustomer to false.
 ```
 
@@ -280,8 +280,8 @@ This section describes how to customize and build the universal developer image.
 First you have to change / customize your `Containerfile.custom-udi`. 
 After you added new features / tools (like adding cli tools, installing new frameworks, upgrading quarkus, ...) commit and push these changes. 
 
-```
-devspaces (main) $ git status
+```bash
+git status
 On branch main
 Your branch is up to date with 'origin/main'.
 
@@ -289,13 +289,11 @@ Changes not staged for commit:
   (use "git add <file>..." to update what will be committed)
   (use "git restore <file>..." to discard changes in working directory)
         modified:   universal-developer-image/Containerfile.custom-udi
-
-no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
 Now create the pipeline and a pipeline-run in OpenShift:
 
-```
+```bash
 oc project marcoklaassen-devspaces 
 oc apply -f universal-developer-image/custom-udi-pipeline.yaml 
 # pipeline.tekton.dev/custom-udi-pipeline created
@@ -306,4 +304,41 @@ oc create -f universal-developer-image/custom-udi-pipeline-run.yaml
 
 After pipeline finished the new version of the UDI is available in your container image repository. 
 
+## The secure way to run nested containers in OpenShift Dev Spaces
 
+[Enable container run capabilities](https://docs.redhat.com/en/documentation/red_hat_openshift_dev_spaces/3.27/html/administration_guide/assembly_configuring-workspaces-globally_administration_guide#proc_enabling-container-run-capabilities_administration_guide) 
+
+```bash
+oc patch checluster/devspaces -n openshift-devspaces \
+  --type='merge' -p \
+  '{"spec":{"devEnvironments":{"disableContainerRunCapabilities":false}}}'
+```
+
+And see: 
+
+```bash
+contract-backend (main) $ cat /etc/passwd
+  root:x:0:0:root:/root:/bin/bash
+  [...]
+  user:x:1000:1000::/home/user:/bin/bash
+
+contract-backend (main) $ podman run -d --name security-test alpine sleep 9999
+
+# When you ran podman exec security-test id, the process shouted: "I am root (0)!"
+contract-backend (main) $ podman exec security-test id
+  uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10(wheel),11(floppy),20(dialout),26(tape),27(video)
+
+# But when you ran ps -ef | grep sleep, you saw it was owned by user (which corresponds to your account 1000 in that environment).
+contract-backend (main) $ ps -ef | grep sleep
+  user        2161    2159  0 13:50 ?        00:00:00 sleep 9999
+  user        2314    1581  0 13:51 pts/0    00:00:00 grep --color=auto sleep
+
+contract-backend (main) $ podman unshare cat /proc/self/uid_map
+         0       1000          1
+         1       1001      64535
+```
+
+* The Root Trap: Inside the nested container, UID 0 (root) is mapped to UID 1000 in your DevSpaces pod.
+* The Rest: Any other user inside Podman (UID 1 through 64535) is mapped to UIDs starting at 1001 and up in your DevSpaces pod.
+* The process is actually restricted. 
+* If that sleep process tried to reach out and touch a file on your DevSpaces disk owned by "real" root, the Linux kernel would look at the map, see that the process is actually just 1000, and say "Access Denied."
