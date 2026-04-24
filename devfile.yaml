@@ -33,7 +33,7 @@ components:
         - name: TESTCONTAINERS_REUSE_ENABLE
           value: 'true'
         - name: DOCKER_HOST
-          value: 'unix:///run/user/1000/podman/podman.sock'
+          value: 'unix:///tmp/podman/podman.sock'
       endpoints:
         - exposure: none
           name: debug
@@ -84,3 +84,13 @@ commands:
       group:
         kind: run
         isDefault: true
+    commands:
+  - id: 99-start-podman-socket
+    exec:
+      label: "99. [tools] Start Podman Socked (done automatically post start)"
+      component: tools
+      commandLine: "mkdir -p /tmp/podman && podman system service --time=0 unix:///tmp/podman/podman.sock &"
+
+events:
+  postStart:
+    - 99-start-podman-socket
