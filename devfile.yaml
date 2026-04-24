@@ -25,13 +25,13 @@ components:
       image: quay.io/mklaasse/udi-rhel9:jdk21
       env:
         - name: QUARKUS_HTTP_HOST
-          value: 0.0.0.0
+          value: '0.0.0.0'
         - name: QUARKUS_CUSTOMER_API_URL
           value: 'https://customer-api-customer-api.apps.ocp4.klaassen.click'
         - name: TESTCONTAINERS_RYUK_DISABLED
-          value: true
+          value: 'true'
         - name: TESTCONTAINERS_REUSE_ENABLE
-          value: true
+          value: 'true'
         - name: DOCKER_HOST
           value: 'unix:///run/user/1000/podman/podman.sock'
       endpoints:
