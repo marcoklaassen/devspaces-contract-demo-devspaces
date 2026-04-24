@@ -89,8 +89,9 @@ commands:
     exec:
       label: "99. [tools] Start Podman Socked (done automatically post start)"
       component: tools
-      commandLine: "mkdir -p /tmp/podman && podman system service --time=0 unix:///tmp/podman/podman.sock &"
-
+      commandLine: >
+        bash -c 'mkdir -p /tmp/podman && nohup /home/tooling/.local/bin/podman system service --time=0
+        unix:///tmp/podman/podman.sock > /tmp/podman/podman.log 2>&1 & disown'
 events:
   postStart:
     - 99-start-podman-socket
