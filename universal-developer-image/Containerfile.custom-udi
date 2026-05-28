@@ -28,6 +28,12 @@ RUN curl -LsO https://github.com/quarkusio/quarkus/releases/download/${QUARKUS_V
     mv /usr/local/quarkus-cli-${QUARKUS_VERSION} "${QUARKUS_HOME}" && \
     rm quarkus-cli-${QUARKUS_VERSION}.zip
 
+# Download and install Helm
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
+    chmod 700 get_helm.sh && \
+    ./get_helm.sh && \
+    rm get_helm.sh
+
 USER 1001
 
 # Verify tools are available
