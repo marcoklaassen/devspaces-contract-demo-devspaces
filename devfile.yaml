@@ -80,9 +80,8 @@ commands:
         # Workaround: not able to inject Secrets managed by Strimzi operator in DevSpaces, yet \
         KAFKA_SASL_JAAS_CONFIG=$(oc get secret kafka-developer -o json | jq -r '.data."sasl.jaas.config"' | base64 --decode) \
         BOOTSTRAP_SERVERS=$(oc get svc kafka-kafka-bootstrap -o json | jq -r '.metadata.name + ":" + (.spec.ports[] | select(.name == "tcp-clients").port | tostring)') \
-        ROUTE_HOST=$(oc get route -l controller.devfile.io/devworkspace_id=${DEVWORKSPACE_ID} -o jsonpath='{.items[0].spec.host}') \
-        echo "Configuring Dev UI host: ${ROUTE_HOST}" \
-        quarkus dev -Dquarkus.dev-ui.hosts="${ROUTE_HOST}"
+        QUARKUS_DEV_UI_HOSTS=$(oc get route -l controller.devfile.io/devworkspace_id=${DEVWORKSPACE_ID} -o jsonpath='{.items[0].spec.host}') \
+        quarkus dev
       group:
         kind: run
         isDefault: true
