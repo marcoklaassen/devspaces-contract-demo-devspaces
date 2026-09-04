@@ -78,7 +78,8 @@ commands:
       workingDir: ${PROJECTS_ROOT}/contract-backend
       commandLine: | 
         # Enable Quarkus Dev UI for DevSpaces route where annotation endpoint-name has to be the same as the entpoint defined in this devfile \
-        QUARKUS_DEV_UI_HOSTS=$(oc get route -l controller.devfile.io/devworkspace_id=${DEVWORKSPACE_ID} -o jsonpath='{.items[?(@.metadata.annotations.che\.routing\.controller\.devfile\.io/endpoint-name=="contract")].spec.host}') \
+        WS_ID=$(oc get pod "$HOSTNAME" -o jsonpath='{.metadata.labels.controller\.devfile\.io/devworkspace_id}')
+        QUARKUS_DEV_UI_HOSTS=$(oc get route -l controller.devfile.io/devworkspace_id="${WS_ID}" -o jsonpath="{.items[?(@.metadata.annotations.che\.routing\.controller\.devfile\.io/endpoint-name=='contract')].spec.host}")
         echo "quarkus.dev-ui.hosts=${QUARKUS_DEV_UI_HOSTS}" > src/main/resources/application-dev.properties \
         # Workaround: not able to inject Secrets managed by Strimzi operator in DevSpaces, yet \
         KAFKA_SASL_JAAS_CONFIG=$(oc get secret kafka-developer -o json | jq -r '.data."sasl.jaas.config"' | base64 --decode) \
